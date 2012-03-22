@@ -21,7 +21,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: dhd_linux_mon.c 278714 2011-08-19 19:25:22Z $
+=======
+ * $Id: wl_linux_mon.c 303266 2011-12-16 00:15:23Z $
+>>>>>>> da0c043... net: wireless: bcmdhd: import AOSP bcmdhd version
  */
 
 #include <linux/string.h>

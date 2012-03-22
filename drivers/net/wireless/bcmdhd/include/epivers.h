@@ -19,7 +19,11 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
+<<<<<<< HEAD
  * $Id: epivers.h.in,v 13.32.4.1 2010-09-17 00:39:18 $
+=======
+ * $Id: epivers.h.in 277737 2011-08-16 17:54:59Z $
+>>>>>>> da0c043... net: wireless: bcmdhd: import AOSP bcmdhd version
  *
 */
 
@@ -31,6 +35,7 @@
 
 #define	EPI_MINOR_VERSION	90
 
+<<<<<<< HEAD
 #define	EPI_RC_NUMBER		125
 
 #define	EPI_INCREMENTAL_NUMBER	120
@@ -45,5 +50,21 @@
 
 
 #define	EPI_VERSION_STR		"5.90.125.120"
+=======
+#define	EPI_RC_NUMBER		195
+
+#define	EPI_INCREMENTAL_NUMBER	35
+
+#define	EPI_BUILD_NUMBER	0
+
+#define	EPI_VERSION		5, 90, 195, 35
+
+#define	EPI_VERSION_NUM		0x055ac323
+
+#define EPI_VERSION_DEV		5.90.195
+
+
+#define	EPI_VERSION_STR		"5.90.195.35"
+>>>>>>> da0c043... net: wireless: bcmdhd: import AOSP bcmdhd version
 
 #endif 
