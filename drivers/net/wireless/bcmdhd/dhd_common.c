@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd_common.c 288105 2011-10-06 01:58:02Z $
+ * $Id: dhd_common.c 290546 2011-10-19 01:55:21Z $
  */
 #include <typedefs.h>
 #include <osl.h>
@@ -303,8 +303,7 @@ dhd_wl_ioctl(dhd_pub_t *dhd_pub, int ifindex, wl_ioctl_t *ioc, void *buf, int le
 	dhd_os_proto_block(dhd_pub);
 
 	ret = dhd_prot_ioctl(dhd_pub, ifindex, ioc, buf, len);
-	if (!ret)
-		dhd_os_check_hang(dhd_pub, ifindex, ret);
+
 
 	dhd_os_proto_unblock(dhd_pub);
 	return ret;
@@ -1608,7 +1607,7 @@ dhd_arp_get_arp_hostip_table(dhd_pub_t *dhd, void *buf, int buflen)
 		return -1;
 
 	iov_len = bcm_mkiovar("arp_hostip", 0, 0, buf, buflen);
-	retcode = dhd_wl_ioctl_cmd(dhd, WLC_GET_VAR, buf, buflen, FALSE, 0);
+	retcode = dhd_wl_ioctl_cmd(dhd, WLC_GET_VAR, buf, buflen, TRUE, 0);
 
 	if (retcode) {
 		DHD_TRACE(("%s: ioctl WLC_GET_VAR error %d\n",
@@ -1936,16 +1935,6 @@ bool dhd_check_ap_wfd_mode_set(dhd_pub_t *dhd)
 		return FALSE;
 }
 
-bool dhd_check_ap_mode_set(dhd_pub_t *dhd)
-{
-#ifdef WL_CFG80211
-	if ((dhd->op_mode & HOSTAPD_MASK) == HOSTAPD_MASK)
-		return TRUE;
-	else
-#endif /* WL_CFG80211 */
-		return FALSE;
-}
-
 #ifdef PNO_SUPPORT
 int
 dhd_pno_clean(dhd_pub_t *dhd)
@@ -2032,11 +2021,7 @@ dhd_pno_set(dhd_pub_t *dhd, wlc_ssid_t* ssids_local, int nssid, ushort scan_fr,
 
 	if ((!dhd) || (!ssids_local)) {
 		DHD_ERROR(("%s error exit\n", __FUNCTION__));
-#ifdef HTC_KlocWork
-		return err;
-#else
 		err = -1;
-#endif
 	}
 
 	if (dhd_check_ap_wfd_mode_set(dhd) == TRUE)
@@ -2306,20 +2291,14 @@ wl_iw_parse_channel_list_tlv(char** list_str, uint16* channel_list,
 int
 wl_iw_parse_ssid_list_tlv(char** list_str, wlc_ssid_t* ssid, int max, int *bytes_left)
 {
-#ifdef HTC_KlocWork
-	char* str = NULL;
-#else
-	char* str = *list_str;
-#endif
+	char* str =  *list_str;
 	int idx = 0;
 
 	if ((list_str == NULL) || (*list_str == NULL) || (*bytes_left < 0)) {
 		DHD_ERROR(("%s error paramters\n", __FUNCTION__));
 		return -1;
 	}
-#ifdef HTC_KlocWork
-	str = *list_str;
-#endif
+
 	while (*bytes_left > 0) {
 
 		if (str[0] != CSCAN_TLV_TYPE_SSID_IE) {

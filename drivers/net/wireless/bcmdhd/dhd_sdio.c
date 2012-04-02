@@ -3096,8 +3096,6 @@ dhd_bus_stop(struct dhd_bus *bus, bool enforce_mutex)
 	bus->rxskip = FALSE;
 	bus->tx_seq = bus->rx_seq = 0;
 
-	dhd_bus_do_stop = FALSE;
-
 	if (enforce_mutex)
 		dhd_os_sdunlock(bus->dhd);
 }

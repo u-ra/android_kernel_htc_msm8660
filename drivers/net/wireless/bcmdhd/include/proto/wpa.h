@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: wpa.h,v 1.19 2009-07-13 08:29:58 $
+ * $Id: wpa.h,v 1.19 2009-07-13 08:29:58 Exp $
  */
 
 
@@ -127,17 +127,6 @@ typedef BWL_PRE_PACKED_STRUCT struct
 				 (cipher) == WPA_CIPHER_TKIP || \
 				 (cipher) == WPA_CIPHER_AES_OCB || \
 				 (cipher) == WPA_CIPHER_AES_CCM)
-#ifdef BCMWAPI_WAI
-#define IS_WAPI_CIPHER(cipher)	((cipher) == WAPI_CIPHER_NONE || \
-				 (cipher) == WAPI_CSE_WPI_SMS4)
-
-/* convert WAPI_CSE_WPI_XXX to WAPI_CIPHER_XXX */
-#define WAPI_CSE_WPI_2_CIPHER(cse) ((cse) == WAPI_CSE_WPI_SMS4 ? \
-				WAPI_CIPHER_SMS4 : WAPI_CIPHER_NONE)
-
-#define WAPI_CIPHER_2_CSE_WPI(cipher) ((cipher) == WAPI_CIPHER_SMS4 ? \
-				WAPI_CSE_WPI_SMS4 : WAPI_CIPHER_NONE)
-#endif /* BCMWAPI_WAI */
 
 
 #define WPA_TKIP_CM_DETECT	60	

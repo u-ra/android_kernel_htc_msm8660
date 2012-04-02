@@ -21,7 +21,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: wl_iw.c,v 1.132.2.18 2011-02-05 01:44:47 $
+ * $Id: wl_iw.c,v 1.132.2.18 2011-02-05 01:44:47 Exp $
  */
 
 #include <wlioctl.h>
@@ -1924,21 +1924,6 @@ char *extra
 
 #ifdef CONFIG_US_NON_DFS_CHANNELS_ONLY
 static int
-wl_iw_set_dfs_channels(
-	struct net_device *dev,
-	struct iw_request_info *info,
-	union iwreq_data *wrqu,
-	char *extra
-)
-{
-	use_non_dfs_channels = *(extra + strlen(SETDFSCHANNELS_CMD) + 1) - '0';
-	use_non_dfs_channels = (use_non_dfs_channels != 0) ? false : true;
-	wl_iw_set_country_code(dev, NULL);
-	return 0;
-}
-#endif
-
-static int
 wl_format_ssid(char* ssid_buf, uint8* ssid, int ssid_len)
 {
 	int i, c;
@@ -2352,72 +2337,6 @@ exit_proc:
 }
 #endif 
 
-/* HTC_CSP_START */
-/* traffic indicate parameters */
-/* framework will obtain RSSI every 3000 ms*/
-/* The throughput mapping to packet count is as below:
- *  2Mbps: ~280 packets / second
- *  4Mbps: ~540 packets / second
- *  6Mbps: ~800 packets / second
- *  8Mbps: ~1200 packets / second
- * 12Mbps: ~1500 packets / second
- * 14Mbps: ~1800 packets / second
- * 16Mbps: ~2000 packets / second
- * 18Mbps: ~2300 packets / second
- * 20Mbps: ~2600 packets / second
- */
-#define TRAFFIC_HIGH_WATER_MARK	        2300 *(3000/1000)
-#define TRAFFIC_LOW_WATER_MARK          256 * (3000/1000)
-typedef enum traffic_ind {
-	TRAFFIC_STATS_HIGH = 0,
-	TRAFFIC_STATS_NORMAL,
-} traffic_ind_t;
-
-
-static int traffic_stats_flag = TRAFFIC_STATS_NORMAL;
-static unsigned long current_traffic_count = 0;
-static unsigned long last_traffic_count = 0;
-extern struct perf_lock wlan_perf_lock;
-
-static void wl_iw_traffic_monitor(struct net_device *dev)
-{
-        unsigned long rx_packets_count = 0;
-	unsigned long tx_packets_count = 0;
-	unsigned long traffic_diff = 0;
-
-        /*for Traffic High/Low indication */
-        dhd_get_txrx_stats(dev, &rx_packets_count, &tx_packets_count);
-        current_traffic_count = rx_packets_count + tx_packets_count;
-
-        if (current_traffic_count >= last_traffic_count) {
-            traffic_diff = current_traffic_count - last_traffic_count;
-            if (traffic_stats_flag == TRAFFIC_STATS_NORMAL) {
-                if (traffic_diff > TRAFFIC_HIGH_WATER_MARK) {
-                    traffic_stats_flag = TRAFFIC_STATS_HIGH;
-#if 0
-/* #ifdef CONFIG_PERFLOCK */
-                    if (!is_perf_lock_active(&wlan_perf_lock))
-						perf_lock(&wlan_perf_lock);
-#endif
-                    printf("lock cpu here, traffic-count=%ld\n", traffic_diff / 3);
-                }
-            } else {
-                if (traffic_diff < TRAFFIC_LOW_WATER_MARK) {
-                    traffic_stats_flag = TRAFFIC_STATS_NORMAL;
-#if 0
-/* #ifdef CONFIG_PERFLOCK */
-                    if (is_perf_lock_active(&wlan_perf_lock))
-                        perf_unlock(&wlan_perf_lock);
-#endif
-                    printf("unlock cpu here, traffic-count=%ld\n", traffic_diff / 3);
-                }
-            }
-        }
-        last_traffic_count = current_traffic_count;
-        /*End of Traffic High/Low indication */
-}
-/* HTC_CSP_END */
-
 static int
 wl_iw_get_rssi(
 	struct net_device *dev,
@@ -2541,8 +2460,7 @@ wl_control_wl_start(struct net_device *dev)
 		sdioh_start(NULL, 1);
 #endif
 
-		if (!ret)
-			dhd_dev_init_ioctl(dev);
+		dhd_dev_init_ioctl(dev);
 
 		g_onoff = G_WLAN_SET_ON;
 	}
@@ -2635,7 +2553,8 @@ wl_iw_control_wl_off(
 #endif
 
 		
-		dhd_os_wake_force_unlock(iw->pub);
+		net_os_set_dtim_skip(dev, 0);
+
 		dhd_customer_gpio_wlan_ctrl(WLAN_RESET_OFF);
 
 		wl_iw_send_priv_event(dev, "STOP");
@@ -10064,7 +9983,7 @@ wl_iw_event(struct net_device *dev, wl_event_msg_t *e, void* data)
 	case WLC_E_ROAM:
 		if (status == WLC_E_STATUS_SUCCESS) {
 			WL_ASSOC((" WLC_E_ROAM : success \n"));
-			goto wl_iw_event_end;
+			return;
 		}
 	break;
 
@@ -10245,12 +10164,6 @@ wl_iw_event(struct net_device *dev, wl_event_msg_t *e, void* data)
 
 	case WLC_E_SCAN_COMPLETE:
 #if defined(WL_IW_USE_ISCAN)
-		if (!g_iscan) {
-
-			WL_ERROR(("Event WLC_E_SCAN_COMPLETE on g_iscan NULL!"));
-			goto wl_iw_event_end;
-		}
-
 		if ((g_iscan) && (g_iscan->tsk_ctl.thr_pid >= 0) &&
 			(g_iscan->iscan_state != ISCAN_STATE_IDLE))
 		{
