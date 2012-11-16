@@ -115,25 +115,12 @@ static struct usb_device_id blacklist_table[] = {
 
 	/* Atheros 3011 with sflash firmware */
 	{ USB_DEVICE(0x0cf3, 0x3002), .driver_info = BTUSB_IGNORE },
-<<<<<<< HEAD
-	{ USB_DEVICE(0x13d3, 0x3304), .driver_info = BTUSB_IGNORE },
-        { USB_DEVICE(0x0930, 0x0215), .driver_info = BTUSB_IGNORE },
-        { USB_DEVICE(0x0489, 0xe03d), .driver_info = BTUSB_IGNORE },
-=======
->>>>>>> 1712948... drivers: bluetooth from CAF
 
 	/* Atheros AR9285 Malbec with sflash firmware */
 	{ USB_DEVICE(0x03f0, 0x311d), .driver_info = BTUSB_IGNORE },
 
 	/* Atheros 3012 with sflash firmware */
-<<<<<<< HEAD
-	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_ATH3012 },
-	{ USB_DEVICE(0x0cf3, 0x311d), .driver_info = BTUSB_ATH3012 },
-	{ USB_DEVICE(0x13d3, 0x3375), .driver_info = BTUSB_ATH3012 },
-	{ USB_DEVICE(0x04ca, 0x3005), .driver_info = BTUSB_ATH3012 },
-=======
 	{ USB_DEVICE(0x0cf3, 0x3004), .driver_info = BTUSB_IGNORE },
->>>>>>> 1712948... drivers: bluetooth from CAF
 
 	/* Atheros AR5BBU12 with sflash firmware */
 	{ USB_DEVICE(0x0489, 0xe02c), .driver_info = BTUSB_IGNORE },
@@ -935,27 +922,6 @@ static int btusb_probe(struct usb_interface *intf,
 	if (ignore_sniffer && id->driver_info & BTUSB_SNIFFER)
 		return -ENODEV;
 
-<<<<<<< HEAD
-	if (id->driver_info & BTUSB_ATH3012) {
-		struct usb_device *udev = interface_to_usbdev(intf);
-
-		/* Old firmware would otherwise let ath3k driver load
-		 * patch and sysconfig files */
-		if (le16_to_cpu(udev->descriptor.bcdDevice) <= 0x0001)
-			return -ENODEV;
-	}
-
-	if (id->driver_info & BTUSB_ATH3012) {
-		struct usb_device *udev = interface_to_usbdev(intf);
-
-		/* Old firmware would otherwise let ath3k driver load
-		 * patch and sysconfig files */
-		if (le16_to_cpu(udev->descriptor.bcdDevice) <= 0x0001)
-			return -ENODEV;
-	}
-
-=======
->>>>>>> 1712948... drivers: bluetooth from CAF
 	data = kzalloc(sizeof(*data), GFP_KERNEL);
 	if (!data)
 		return -ENOMEM;
