@@ -832,13 +832,11 @@ static int mipi_dsi_panel_power(const int on)
 
 int villec2_panel_init(void)
 {
-	PR_DISP_INFO("%s JURA: early_init", __func__);
 	if(panel_type != PANEL_ID_NONE)
 		msm_fb_register_device("mipi_dsi", &mipi_dsi_pdata);
 	else
 		printk(KERN_INFO "[DISP]panel ID= NONE\n");
 
-	PR_DISP_INFO("%s JURA: late init", __func__);
 	mipi_dsi_buf_alloc(&panel_tx_buf, DSI_BUF_SIZE);
 	mipi_dsi_buf_alloc(&panel_rx_buf, DSI_BUF_SIZE);
 
