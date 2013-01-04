@@ -397,7 +397,7 @@ static int mipi_cmd_samsung_blue_qhd_pt_init(void)
 #ifdef CONFIG_FB_MSM_MIPI_PANEL_DETECT
 	    if (msm_fb_detect_client("mipi_cmd_samsung_qhd"))
 			        return 0;
-		PR_DISP_INFO("panel: mipi_cmd_novatek_qhd\n");
+		PR_DISP_INFO("panel: mipi_cmd_samsung_qhd\n");
 #endif
 
 	pinfo.xres = 540;
