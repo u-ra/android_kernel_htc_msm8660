@@ -2954,10 +2954,13 @@ static struct resource msm_fb_resources[] = {
  */
 };
 
-static int msm_fb_detect_panel(const char *name)
+static int msm_fb_villec2_detect_panel(const char *name)
 {
     if (!strcmp(name, "mipi_cmd_samsung_qhd"))
+	{
+		pr_warning("%s: supported '%s'", __func__, name);
         return 0;
+	}
 
 #ifdef CONFIG_FB_MSM_HDMI_MSM_PANEL
     else if (!strcmp(name, "hdmi_msm"))
@@ -2969,7 +2972,7 @@ static int msm_fb_detect_panel(const char *name)
 }
 
 static struct msm_fb_platform_data msm_fb_pdata = {
-    .detect_client = msm_fb_detect_panel,
+    .detect_client = msm_fb_villec2_detect_panel,
     .blt_mode = 1,
     .width = 49,
     .height = 87,
