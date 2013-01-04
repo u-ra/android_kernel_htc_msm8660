@@ -141,5 +141,7 @@ obj-$(CONFIG_MSM_VIDC_1080P) += vidc/
 
 obj-$(CONFIG_FB_MSM_HDMI_MHL_SII9234)  += sii9234/
 
+obj-$(CONFIG_MACH_VILLEC2) += villec2-panel.o
+
 clean:
 	rm *.o .*cmd

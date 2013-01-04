@@ -10,17 +10,9 @@
  * GNU General Public License for more details.
  *
  */
-#if defined(CONFIG_ARCH_MSM8X60) && !defined(CONFIG_FB_MSM8960)
-	#include "../../../../drivers/video/msm/msm_fb.h"
-	#include "../../../../drivers/video/msm/mipi_dsi.h"
-	#include "../../../../drivers/video/msm/mdp4.h"
-#elif defined(CONFIG_ARCH_MSM8960) || defined(CONFIG_FB_MSM8960)
-	#include "../../../../drivers/video/msm/msm_fb.h"
-	#include "../../../../drivers/video/msm/mipi_dsi.h"
-	#include "../../../../drivers/video/msm/mdp4.h"
-#else
-	#warning "Unsupported ARCH CONFIG"
-#endif
+#include "msm_fb.h"
+#include "mipi_dsi.h"
+#include "mdp4.h"
 
 #include <mach/gpio.h>
 #include <mach/panel_id.h>
@@ -401,6 +393,12 @@ static unsigned char ville_shrink_pwm_c2(int val)
 static int mipi_cmd_samsung_blue_qhd_pt_init(void)
 {
 	int ret;
+
+#ifdef CONFIG_FB_MSM_MIPI_PANEL_DETECT
+	    if (msm_fb_detect_client("mipi_cmd_samsung_qhd"))
+			        return 0;
+		PR_DISP_INFO("panel: mipi_cmd_novatek_qhd\n");
+#endif
 
 	pinfo.xres = 540;
 	pinfo.yres = 960;
@@ -832,13 +830,15 @@ static int mipi_dsi_panel_power(const int on)
 	return 0;
 }
 
-static int __init villec2_panel_init(void)
+int villec2_panel_init(void)
 {
+	PR_DISP_INFO("%s JURA: early_init", __func__);
 	if(panel_type != PANEL_ID_NONE)
 		msm_fb_register_device("mipi_dsi", &mipi_dsi_pdata);
 	else
 		printk(KERN_INFO "[DISP]panel ID= NONE\n");
 
+	PR_DISP_INFO("%s JURA: late init", __func__);
 	mipi_dsi_buf_alloc(&panel_tx_buf, DSI_BUF_SIZE);
 	mipi_dsi_buf_alloc(&panel_rx_buf, DSI_BUF_SIZE);
 
